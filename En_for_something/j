@@ -1,0 +1,87 @@
+{
+    "create_user": "system",
+    "desc": "平台部署",
+    "dialog": "在平台内进行部署服务",
+    "enable_collect_log": true,
+    "icon": "kubernetes",
+    "input_args": [
+        {
+            "desc": "镜像地址",
+            "name": "image-path"
+        },
+        {
+            "desc": "发布类型",
+            "name": "type"
+        },
+        {
+            "desc": "部署环境",
+            "name": "env",
+            "type": "clusterenv"
+        },
+        {
+            "desc": "应用名称",
+            "name": "application",
+            "param": {
+                "defaultValue": "{{workflow.parameters.wf-label-applicationName}}",
+                "value": "{{workflow.parameters.wf-label-applicationName}}"
+            },
+            "type": "application"
+        },
+        {
+            "credType": [
+                "docker_registry"
+            ],
+            "desc": "镜像仓库",
+            "message": "docker push/pull所需要的镜像仓库",
+            "multiselectable": true,
+            "name": "credential",
+            "type": "credential",
+            "unrequired": true
+        },
+        {
+            "desc": "灰度发布",
+            "name": "canary",
+            "param": {
+                "defaultValue": "false",
+                "value": "false"
+            },
+            "type": "boolean",
+            "unrequired": true
+        }
+    ],
+    "main": {
+        "args": [
+            "deploy",
+            "--address",
+            "amp.kubeease-system:18080",
+            "--type",
+            "{{inputs.parameters.type}}",
+            "--env",
+            "{{inputs.parameters.env}}",
+            "--image",
+            "{{inputs.parameters.image-path}}",
+            "--app",
+            "{{inputs.parameters.application}}",
+            "--tenant",
+            "{{workflow.parameters.wf-label-tenantName}}",
+            "--project",
+            "{{workflow.parameters.wf-label-projectName}}",
+            "--secret",
+            "{{inputs.parameters.credential}}",
+            "--canary",
+            "{{inputs.parameters.canary}}",
+            "--executor",
+            "{{workflow.parameters.wf-creator}}"
+        ],
+        "command": [
+            "/opt/amp/exec"
+        ],
+        "image": "{{workflow.parameters.wf-registry}}/middleware/amp:exec-5.7.0",
+        "name": "",
+        "resources": {}
+    },
+    "name": "platform-deploy",
+    "tags": [
+        "服务部署"
+    ]
+}
